@@ -1,0 +1,130 @@
+CREATE DATABASE IF NOT EXISTS ESTOQUE;
+
+USE ESTOQUE;
+
+CREATE TABLE PRODUTO (
+    cod_produto CHAR(6) PRIMARY KEY,
+    descricao VARCHAR(255),
+    marca VARCHAR(50),
+    modelo VARCHAR(100),
+    ano_fabricacao DATE,
+    num_peca INTEGER UNIQUE,
+    preco_venda DECIMAL,
+    quantidade INTEGER
+);
+
+CREATE TABLE FORNECEDOR (
+    nome VARCHAR(100),
+    cnpj CHAR(14) UNIQUE,
+    estado CHAR(2),
+    cidade VARCHAR(100),
+    endereco VARCHAR(255),
+    email VARCHAR(255),
+    telefone INTEGER,
+    cod_fornecedor CHAR(6) PRIMARY KEY
+);
+
+CREATE TABLE PRODUTO_COMPRA (
+    data_hora TIMESTAMP,
+    num_nota_fiscal VARCHAR(255),
+    preco_compra DECIMAL,
+    quantidade INTEGER,
+    cod_produto CHAR(6),
+    cod_fornecedor CHAR(6),
+    id_produto_compra INTEGER PRIMARY KEY,
+    matricula_funcionario INTEGER
+);
+
+CREATE TABLE FUNCIONARIO (
+    matricula INTEGER PRIMARY KEY,
+    nome VARCHAR(100),
+    cargo VARCHAR(50),
+    usuario VARCHAR(30) UNIQUE,
+    senha VARCHAR(255)
+);
+
+CREATE TABLE LOCALIZACAO (
+    cod_localizacao CHAR(6) PRIMARY KEY,
+    descricao VARCHAR(255),
+    quantidade INTEGER
+);
+
+CREATE TABLE CLIENTE (
+    nome VARCHAR(255),
+    cpf CHAR(11) UNIQUE,
+    estado CHAR(2),
+    cidade VARCHAR(100),
+    cep CHAR(8),
+    endereco VARCHAR(255),
+    email VARCHAR(255),
+    telefone INTEGER,
+    id_cliente INTEGER PRIMARY KEY
+);
+
+CREATE TABLE PRODUTO_VENDA (
+    data_hora TIMESTAMP,
+    numero_fatura VARCHAR(255),
+    preco_venda DECIMAL,
+    quantidade INTEGER,
+    id_produto_venda INTEGER PRIMARY KEY,
+    cod_produto CHAR(6),
+    matricula_funcionario INTEGER,
+    id_cliente INTEGER
+);
+
+CREATE TABLE DEVOLUCAO_VENDA (
+    data_hora TIMESTAMP,
+    quantidade INTEGER,
+    id_produto_venda INTEGER
+);
+
+CREATE TABLE DEVOLUCAO_COMPRA (
+    data_hora TIMESTAMP,
+    quantidade INTEGER,
+    id_produto_compra INTEGER
+);
+
+CREATE TABLE LOCALIZACAO_PRODUTO (
+    cod_localizacao CHAR(6),
+    cod_produto CHAR(6)
+);
+ 
+ALTER TABLE PRODUTO_COMPRA ADD CONSTRAINT FK_PRODUTO_COMPRA_1
+    FOREIGN KEY (cod_produto)
+    REFERENCES PRODUTO (cod_produto);
+ 
+ALTER TABLE PRODUTO_COMPRA ADD CONSTRAINT FK_PRODUTO_COMPRA_2
+    FOREIGN KEY (cod_fornecedor)
+    REFERENCES FORNECEDOR (cod_fornecedor);
+ 
+ALTER TABLE PRODUTO_COMPRA ADD CONSTRAINT FK_PRODUTO_COMPRA_4
+    FOREIGN KEY (matricula_funcionario)
+    REFERENCES FUNCIONARIO (matricula);
+ 
+ALTER TABLE PRODUTO_VENDA ADD CONSTRAINT FK_PRODUTO_VENDA_2
+    FOREIGN KEY (cod_produto)
+    REFERENCES PRODUTO (cod_produto);
+ 
+ALTER TABLE PRODUTO_VENDA ADD CONSTRAINT FK_PRODUTO_VENDA_3
+    FOREIGN KEY (matricula_funcionario)
+    REFERENCES FUNCIONARIO (matricula);
+ 
+ALTER TABLE PRODUTO_VENDA ADD CONSTRAINT FK_PRODUTO_VENDA_4
+    FOREIGN KEY (id_cliente)
+    REFERENCES CLIENTE (id_cliente);
+ 
+ALTER TABLE DEVOLUCAO_VENDA ADD CONSTRAINT FK_DEVOLUCAO_VENDA_1
+    FOREIGN KEY (id_produto_venda)
+    REFERENCES PRODUTO_VENDA (id_produto_venda);
+ 
+ALTER TABLE DEVOLUCAO_COMPRA ADD CONSTRAINT FK_DEVOLUCAO_COMPRA_1
+    FOREIGN KEY (id_produto_compra)
+    REFERENCES PRODUTO_COMPRA (id_produto_compra);
+ 
+ALTER TABLE LOCALIZACAO_PRODUTO ADD CONSTRAINT FK_LOCALIZACAO_PRODUTO_1
+    FOREIGN KEY (cod_localizacao)
+    REFERENCES LOCALIZACAO (cod_localizacao);
+ 
+ALTER TABLE LOCALIZACAO_PRODUTO ADD CONSTRAINT FK_LOCALIZACAO_PRODUTO_2
+    FOREIGN KEY (cod_produto)
+    REFERENCES PRODUTO (cod_produto);
